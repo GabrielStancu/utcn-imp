@@ -45,6 +45,7 @@ public:
     REF,
     BINARY,
     CALL,
+    INTEGER
   };
 
 public:
@@ -133,6 +134,18 @@ public:
 private:
   std::shared_ptr<Expr> callee_;
   ArgList args_;
+};
+
+/**
+ * Integer expression 
+ **/
+class IntegerExpression : public Expr {
+  public:
+    IntegerExpression(uint64_t n) : Expr(Kind::INTEGER), n_(n) {}
+
+    uint64_t GetInteger() const { return n_; }
+  private: 
+    uint64_t n_;
 };
 
 /**

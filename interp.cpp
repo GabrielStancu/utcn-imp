@@ -22,7 +22,7 @@ void Interp::Run()
         continue;
       }
       case Opcode::PUSH_INT: {
-        uint64_t n = prog_.Read<uint64_t>(pc_);
+        int64_t n = prog_.Read<int64_t>(pc_);
         Push(n);
         continue;
       }

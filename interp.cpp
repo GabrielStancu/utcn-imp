@@ -21,6 +21,11 @@ void Interp::Run()
         Push(prog_.Read<RuntimeFn>(pc_));
         continue;
       }
+      case Opcode::PUSH_INT: {
+        uint64_t n = prog_.Read<uint64_t>(pc_);
+        Push(n);
+        continue;
+      }
       case Opcode::PEEK: {
         auto idx = prog_.Read<unsigned>(pc_);
         Push(*(stack_.rbegin() + idx));

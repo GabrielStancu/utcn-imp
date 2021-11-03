@@ -53,6 +53,40 @@ void Interp::Run()
         }
         continue;
       }
+      case Opcode::TIMES: {
+        auto rhs = PopInt();
+        auto lhs = PopInt();
+        long res = lhs * rhs;
+        if(res < 0 && lhs >= 0 && rhs >= 0) {
+          throw RuntimeError("overflow error");
+        }
+        
+        Push(res);
+        continue;
+      }
+      case Opcode::DIV: {
+        auto rhs = PopInt();
+        auto lhs = PopInt();
+        long res = lhs / rhs;
+        if(res < 0 && lhs >= 0 && rhs >= 0) {
+          throw RuntimeError("overflow error");
+        }
+        
+        Push(res);
+        continue;
+      }
+      case Opcode::MOD: {
+        auto rhs = PopInt();
+        auto lhs = PopInt();
+        
+        if(rhs == 0) {
+          throw RuntimeError("overflow error");
+        }
+        
+        long res = lhs % rhs;
+        Push(res);
+        continue;
+      }
       case Opcode::ADD: {
         auto rhs = PopInt();
         auto lhs = PopInt();
@@ -61,7 +95,7 @@ void Interp::Run()
           throw RuntimeError("overflow error");
         }
         
-        Push(lhs + rhs);
+        Push(res);
         continue;
       }
       case Opcode::SUB: {
@@ -70,6 +104,65 @@ void Interp::Run()
         Push(lhs - rhs);
         continue;
       }
+      case Opcode::AND: {
+        auto rhs = PopInt();
+        auto lhs = PopInt();
+        long res = lhs && rhs;
+        
+        Push(res);
+        continue;
+      }
+      case Opcode::OR: {
+        auto rhs = PopInt();
+        auto lhs = PopInt();
+        long res = lhs || rhs;
+        
+        Push(res);
+        continue;
+      }
+      case Opcode::GREATER: {
+        auto rhs = PopInt();
+        auto lhs = PopInt();
+        long res = lhs < rhs;
+        
+        Push(res);
+        continue;
+      }
+      case Opcode::GREATER_EQUAL: {
+        auto rhs = PopInt();
+        auto lhs = PopInt();
+        long res = lhs <= rhs;
+        
+        Push(res);
+        continue;
+      }
+      case Opcode::LOWER: {
+        auto rhs = PopInt();
+        auto lhs = PopInt();
+        long res = lhs > rhs;
+        
+        Push(res);
+        continue;
+      }
+      case Opcode::LOWER_EQUAL: {
+        auto rhs = PopInt();
+        auto lhs = PopInt();
+        long res = lhs >= rhs;
+        
+        Push(res);
+        continue;
+      }
+      case Opcode::EQUAL_EQUAL: {
+        auto rhs = PopInt();
+        auto lhs = PopInt();
+        long res = lhs == rhs;
+        
+        Push(res);
+        continue;
+      }
+
+      // >, <, <=, >=, ==... 
+
       case Opcode::RET: {
         auto depth = prog_.Read<unsigned>(pc_);
         auto nargs = prog_.Read<unsigned>(pc_);

@@ -3,6 +3,18 @@ func print_int(a: int): int = "print_int"
 func read_int(): int = "read_int"
 
 func exp(a: int, n: int): int {
+  return a == n
+}
+
+func exp_goal(a: int, n: int): int {
+  if (n == 0) {
+    return 1
+  } else {
+    return a * exp(a, n-1);
+  }
+}
+
+func exp_old(a: int, n: int): int {
   if (n == 0) {
     return 1
   } else {

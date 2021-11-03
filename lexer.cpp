@@ -140,10 +140,16 @@ std::ostream &operator<<(std::ostream &os, const Token::Kind kind)
     case Token::Kind::COMMA: return os << ",";
     case Token::Kind::PLUS: return os << "+";
     case Token::Kind::MINUS: return os << "-";
+    case Token::Kind::TIMES: return os << "*";
+    case Token::Kind::GREATER: return os << ">";
+    case Token::Kind::LOWER: return os << "<";
     case Token::Kind::END: return os << "END";
     case Token::Kind::INT: return os << "INT";
     case Token::Kind::STRING: return os << "STRING";
     case Token::Kind::IDENT: return os << "IDENT";
+    case Token::Kind::LOWER_EQUAL: return os << "<=";
+    case Token::Kind::GREATER_EQUAL: return os << ">=";
+    case Token::Kind::EQUAL_EQUAL: return os << "==";
   }
   return os;
 }
@@ -199,10 +205,50 @@ const Token &Lexer::Next()
     case '}': return NextChar(), tk_ = Token::RBrace(loc);
     case ':': return NextChar(), tk_ = Token::Colon(loc);
     case ';': return NextChar(), tk_ = Token::Semi(loc);
-    case '=': return NextChar(), tk_ = Token::Equal(loc);
+    case '=': {
+      NextChar();
+      if (chr_ == '=') {
+        return NextChar(), tk_ = Token::EqualEqual(loc);
+      } else {
+        return tk_ = Token::Equal(loc);
+      }
+    }
+    case '*': return NextChar(), tk_ = Token::Times(loc);
+    case '/': return NextChar(), tk_ = Token::Div(loc);
+    case '%': return NextChar(), tk_ = Token::Mod(loc);
     case '+': return NextChar(), tk_ = Token::Plus(loc);
-    case '-': return NextChar(), tk_ = Token::Minus(loc);
+    case '-': return NextChar(), tk_ = Token::Minus(loc); 
+    case '&': {
+      NextChar();
+      if (chr_ == '&') {
+        return NextChar(), tk_ = Token::And(loc);
+      }    
+      Error("unknown character '" + std::string(1, chr_) + "'");
+    }
+    case '|': {
+      NextChar();
+      if (chr_ == '|') {
+        return NextChar(), tk_ = Token::Or(loc);
+      }    
+      Error("unknown character '" + std::string(1, chr_) + "'");
+    }
     case ',': return NextChar(), tk_ = Token::Comma(loc);
+    case '>': {
+      NextChar();
+      if (chr_ == '=') {
+        return NextChar(), tk_ = Token::GreaterEqual(loc);
+      } else {
+        return tk_ = Token::Greater(loc);
+      }
+    }
+    case '<': {
+      NextChar();
+      if (chr_ == '=') {
+        return NextChar(), tk_ = Token::Lower(loc);
+      } else {
+        return tk_ = Token::Lower(loc);
+      }
+    }
     case '"': {
       std::string word;
       NextChar();

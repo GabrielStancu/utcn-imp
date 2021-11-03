@@ -149,10 +149,30 @@ private:
   void EmitPeek(uint32_t index);
   /// Emit a return instruction.
   void EmitReturn();
+  /// Emit a times opcode.
+  void EmitTimes();
+  /// Emit a div opcode.
+  void EmitDiv();
+  /// Emit a mod opcode.
+  void EmitMod();
   /// Emit an add opcode.
   void EmitAdd();
   /// Emit an sub opcode.
   void EmitSub();
+  /// Emit an and opcode.
+  void EmitAnd();
+  /// Emit an or opcode.
+  void EmitOr();
+  /// Emit a > opcode.
+  void EmitGreater();
+  /// Emit a >= opcode.
+  void EmitGreaterEqual();
+  /// Emit a < opcode.
+  void EmitLower();
+  /// Emit a <= opcode.
+  void EmitLowerEqual();
+  /// Emit a == opcode.
+  void EmitEqualEqual();
   /// Emit a label.
   void EmitLabel(Label label);
   /// Emit a conditional jump.

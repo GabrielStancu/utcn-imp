@@ -48,11 +48,21 @@ public:
     COMMA,
     PLUS,
     MINUS,
+    TIMES, 
+    DIV,
+    MOD,
+    LOWER, 
+    GREATER, 
+    AND, 
+    OR,
     // Complex tokens.
     INT,
     STRING,
     IDENT,
     END,
+    LOWER_EQUAL,
+    GREATER_EQUAL,
+    EQUAL_EQUAL
   };
 
 public:
@@ -106,9 +116,19 @@ public:
   static Token RBrace(const Location &l) { return Token(l, Kind::RBRACE); }
   static Token Colon(const Location &l) { return Token(l, Kind::COLON); }
   static Token Semi(const Location &l) { return Token(l, Kind::SEMI); }
-  static Token Equal(const Location &l) { return Token(l, Kind::EQUAL); }
+  static Token Equal(const Location &l) { return Token(l, Kind::EQUAL); } 
+  static Token Times(const Location &l) { return Token(l, Kind::TIMES); }
+  static Token Div(const Location &l) { return Token(l, Kind::DIV); }
+  static Token Mod(const Location &l) { return Token(l, Kind::MOD); }
   static Token Plus(const Location &l) { return Token(l, Kind::PLUS); }
   static Token Minus(const Location &l) { return Token(l, Kind::MINUS); }
+  static Token And(const Location &l) { return Token(l, Kind::AND); }
+  static Token Or(const Location &l) { return Token(l, Kind::OR); }
+  static Token Greater(const Location &l) { return Token(l, Kind::GREATER); }
+  static Token Lower(const Location &l) { return Token(l, Kind::LOWER); }
+  static Token GreaterEqual(const Location &l) { return Token(l, Kind::GREATER_EQUAL); }
+  static Token LowerEqual(const Location &l) { return Token(l, Kind::LOWER_EQUAL); }
+  static Token EqualEqual(const Location &l) { return Token(l, Kind::EQUAL_EQUAL); }
   static Token Comma(const Location &l) { return Token(l, Kind::COMMA); }
   static Token Func(const Location &l) { return Token(l, Kind::FUNC); }
   static Token Return(const Location &l) { return Token(l, Kind::RETURN); }
@@ -116,6 +136,7 @@ public:
   static Token Ident(const Location &l, const std::string &str);
   static Token String(const Location &l, const std::string &str);
   static Token Integer(const Location &l, const uint64_t n);
+  
 
   /// Print the token to a stream.
   void Print(std::ostream &os) const;

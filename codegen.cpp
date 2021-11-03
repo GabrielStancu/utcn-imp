@@ -209,11 +209,38 @@ void Codegen::LowerBinaryExpr(const Scope &scope, const BinaryExpr &binary)
   LowerExpr(scope, binary.GetLHS());
   LowerExpr(scope, binary.GetRHS());
   switch (binary.GetKind()) {
+    case BinaryExpr::Kind::TIMES: {
+      return EmitTimes();
+    }
+    case BinaryExpr::Kind::DIV: {
+      return EmitDiv();
+    }
     case BinaryExpr::Kind::ADD: {
       return EmitAdd();
     }
     case BinaryExpr::Kind::SUB: {
       return EmitSub();
+    }
+    case BinaryExpr::Kind::AND: {
+      return EmitAnd();
+    }
+    case BinaryExpr::Kind::OR: {
+      return EmitOr();
+    }
+    case BinaryExpr::Kind::GREATER: {
+      return EmitGreater();
+    }
+    case BinaryExpr::Kind::GREATER_EQUAL: {
+      return EmitGreaterEqual();
+    }
+    case BinaryExpr::Kind::LOWER: {
+      return EmitLower();
+    }
+    case BinaryExpr::Kind::LOWER_EQUAL: {
+      return EmitLowerEqual();
+    }
+    case BinaryExpr::Kind::EQUAL_EQUAL: {
+      return EmitEqualEqual();
     }
   }
 }
@@ -347,6 +374,30 @@ void Codegen::EmitReturn()
 }
 
 // -----------------------------------------------------------------------------
+void Codegen::EmitTimes()
+{
+  assert(depth_ > 0 && "no elements on stack");
+  depth_ -= 1;
+  Emit<Opcode>(Opcode::TIMES);
+}
+
+// -----------------------------------------------------------------------------
+void Codegen::EmitDiv()
+{
+  assert(depth_ > 0 && "no elements on stack");
+  depth_ -= 1;
+  Emit<Opcode>(Opcode::DIV);
+}
+
+// -----------------------------------------------------------------------------
+void Codegen::EmitMod()
+{
+  assert(depth_ > 0 && "no elements on stack");
+  depth_ -= 1;
+  Emit<Opcode>(Opcode::MOD);
+}
+
+// -----------------------------------------------------------------------------
 void Codegen::EmitAdd()
 {
   assert(depth_ > 0 && "no elements on stack");
@@ -360,6 +411,62 @@ void Codegen::EmitSub()
   assert(depth_ > 0 && "no elements on stack");
   depth_ -= 1;
   Emit<Opcode>(Opcode::SUB);
+}
+
+// -----------------------------------------------------------------------------
+void Codegen::EmitAnd()
+{
+  assert(depth_ > 0 && "no elements on stack");
+  depth_ -= 1;
+  Emit<Opcode>(Opcode::AND);
+}
+
+// -----------------------------------------------------------------------------
+void Codegen::EmitOr()
+{
+  assert(depth_ > 0 && "no elements on stack");
+  depth_ -= 1;
+  Emit<Opcode>(Opcode::OR);
+}
+
+// -----------------------------------------------------------------------------
+void Codegen::EmitGreater()
+{
+  assert(depth_ > 0 && "no elements on stack");
+  depth_ -= 1;
+  Emit<Opcode>(Opcode::GREATER);
+}
+
+// -----------------------------------------------------------------------------
+void Codegen::EmitGreaterEqual()
+{
+  assert(depth_ > 0 && "no elements on stack");
+  depth_ -= 1;
+  Emit<Opcode>(Opcode::GREATER_EQUAL);
+}
+
+// -----------------------------------------------------------------------------
+void Codegen::EmitLower()
+{
+  assert(depth_ > 0 && "no elements on stack");
+  depth_ -= 1;
+  Emit<Opcode>(Opcode::LOWER);
+}
+
+// -----------------------------------------------------------------------------
+void Codegen::EmitLowerEqual()
+{
+  assert(depth_ > 0 && "no elements on stack");
+  depth_ -= 1;
+  Emit<Opcode>(Opcode::LOWER_EQUAL);
+}
+
+// -----------------------------------------------------------------------------
+void Codegen::EmitEqualEqual()
+{
+  assert(depth_ > 0 && "no elements on stack");
+  depth_ -= 1;
+  Emit<Opcode>(Opcode::EQUAL_EQUAL);
 }
 
 // -----------------------------------------------------------------------------

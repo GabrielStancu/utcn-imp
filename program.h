@@ -21,8 +21,18 @@ enum class Opcode : uint8_t {
   POP,
   CALL,
 
+  TIMES,
+  DIV,
+  MOD,
   ADD,
   SUB,
+  AND,
+  OR,
+  GREATER,
+  GREATER_EQUAL,
+  LOWER,
+  LOWER_EQUAL,
+  EQUAL_EQUAL,
   RET,
 
   JUMP_FALSE,

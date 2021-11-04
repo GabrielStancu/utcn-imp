@@ -21,6 +21,7 @@ public:
   enum class Kind {
     BLOCK,
     WHILE,
+    IF,
     EXPR,
     RETURN
   };
@@ -238,6 +239,36 @@ private:
   std::shared_ptr<Expr> cond_;
   /// Expression to be executed in the loop body.
   std::shared_ptr<Stmt> stmt_;
+};
+
+/**
+ * If statement.
+ *
+ * if (<cond>) <stmt>
+ * else <stmt>
+ */
+class IfStmt final : public Stmt {
+public:
+  IfStmt(std::shared_ptr<Expr> cond, std::shared_ptr<Stmt> stmt, std::shared_ptr<Stmt> else_stmt)
+    : Stmt(Kind::IF)
+    , cond_(cond)
+    , stmt_(stmt)
+    , else_stmt_(else_stmt)
+  {
+  }
+
+  const Expr &GetCond() const { return *cond_; }
+  const Stmt &GetStmt() const { return *stmt_; }
+  //const Stmt &GetElseStmt() const { return *else_stmt_; }
+  const std::shared_ptr<Stmt> GetElseStmt() const {return else_stmt_; }
+
+private:
+  /// Condition for the if body.
+  std::shared_ptr<Expr> cond_;
+  /// Expression to be executed in the main branch body.
+  std::shared_ptr<Stmt> stmt_;
+  /// Expression to be executed in the else branch body.
+  std::shared_ptr<Stmt> else_stmt_;
 };
 
 /**

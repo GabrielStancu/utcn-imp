@@ -148,7 +148,7 @@ void Interp::Run()
         auto rhs = PopInt();
         auto lhs = PopInt();
         long res = lhs >= rhs;
-        
+
         Push(res);
         continue;
       }

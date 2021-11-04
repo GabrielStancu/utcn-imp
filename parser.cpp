@@ -88,6 +88,7 @@ std::shared_ptr<Stmt> Parser::ParseStmt()
   switch (tk.GetKind()) {
     case Token::Kind::RETURN: return ParseReturnStmt();
     case Token::Kind::WHILE: return ParseWhileStmt();
+    case Token::Kind::IF: return ParseIfStmt();
     case Token::Kind::LBRACE: return ParseBlockStmt();
     default: return std::make_shared<ExprStmt>(ParseExpr());
   }
@@ -133,6 +134,24 @@ std::shared_ptr<WhileStmt> Parser::ParseWhileStmt()
 }
 
 // -----------------------------------------------------------------------------
+std::shared_ptr<IfStmt> Parser::ParseIfStmt()
+{
+  Check(Token::Kind::IF);
+  Expect(Token::Kind::LPAREN);
+  lexer_.Next();
+  auto cond = ParseExpr();
+  Check(Token::Kind::RPAREN);
+  lexer_.Next();
+  auto stmt = ParseStmt();
+  if(Current().Is(Token::Kind::ELSE)){
+    lexer_.Next();
+    auto else_stmt = ParseStmt();
+    return std::make_shared<IfStmt>(cond, stmt, else_stmt);
+  }
+  return std::make_shared<IfStmt>(cond, stmt, nullptr);
+}
+
+// -----------------------------------------------------------------------------
 std::shared_ptr<Expr> Parser::ParseTermExpr()
 {
   auto tk = Current();
@@ -150,6 +169,13 @@ std::shared_ptr<Expr> Parser::ParseTermExpr()
       return std::static_pointer_cast<Expr>(
           std::make_shared<IntegerExpression>(n)
       );
+    }
+    case Token::Kind::LPAREN: {
+      lexer_.Next();
+      auto expr = ParseExpr();
+      Check(Token::Kind::RPAREN);
+      lexer_.Next();
+      return expr;
     }
     default: {
       std::ostringstream os;

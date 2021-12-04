@@ -53,7 +53,13 @@ Codegen::Binding Codegen::FuncScope::Lookup(const std::string &name) const
 // -----------------------------------------------------------------------------
 Codegen::Binding Codegen::BlockScope::Lookup(const std::string &name) const
 {
-  // TODO: nothing defined here yet.
+  // Find the name among local declarations.
+  if (auto it = locals_.find(name); it != locals_.end()) {
+    Binding b;
+    b.Kind = Binding::Kind::LOCAL;
+    b.Index = it->second;
+    return b;
+  }
   return parent_->Lookup(name);
 }
 
@@ -105,7 +111,7 @@ std::unique_ptr<Program> Codegen::Translate(const Module &mod)
 }
 
 // -----------------------------------------------------------------------------
-void Codegen::LowerStmt(const Scope &scope, const Stmt &stmt)
+void Codegen::LowerStmt(Scope &scope, const Stmt &stmt)
 {
   switch (stmt.GetKind()) {
     case Stmt::Kind::BLOCK: {
@@ -123,6 +129,9 @@ void Codegen::LowerStmt(const Scope &scope, const Stmt &stmt)
     case Stmt::Kind::RETURN: {
       return LowerReturnStmt(scope, static_cast<const ReturnStmt &>(stmt));
     }
+    case Stmt::Kind::LET: {
+      return LowerLetStmt(scope, static_cast<const LetStmt &>(stmt));
+    }
   }
 }
 
@@ -136,11 +145,16 @@ void Codegen::LowerBlockStmt(const Scope &scope, const BlockStmt &blockStmt)
     LowerStmt(blockScope, *stmt);
   }
 
+  int localsCount = blockScope.CountLocals();
+  for(int i = 0; i < localsCount; i++) {
+    EmitPop();
+  }
+
   assert(depth_ == depthIn && "mismatched block depth on exit");
 }
 
 // -----------------------------------------------------------------------------
-void Codegen::LowerWhileStmt(const Scope &scope, const WhileStmt &whileStmt)
+void Codegen::LowerWhileStmt(Scope &scope, const WhileStmt &whileStmt)
 {
   auto entry = MakeLabel();
   auto exit = MakeLabel();
@@ -154,7 +168,7 @@ void Codegen::LowerWhileStmt(const Scope &scope, const WhileStmt &whileStmt)
 }
 
 // -----------------------------------------------------------------------------
-void Codegen::LowerIfStmt(const Scope &scope, const IfStmt &ifStmt)
+void Codegen::LowerIfStmt(Scope &scope, const IfStmt &ifStmt)
 {
   auto else_branch = MakeLabel();
   auto exit = MakeLabel();
@@ -176,6 +190,13 @@ void Codegen::LowerReturnStmt(const Scope &scope, const ReturnStmt &retStmt)
 {
   LowerExpr(scope, retStmt.GetExpr());
   EmitReturn();
+}
+
+// -----------------------------------------------------------------------------
+void Codegen::LowerLetStmt(Scope &scope, const LetStmt &letStmt)
+{
+  LowerExpr(scope, letStmt.GetExpr());
+  scope.RegisterLocal(letStmt.GetName(), (uint32_t)depth_);
 }
 
 // -----------------------------------------------------------------------------
@@ -219,6 +240,10 @@ void Codegen::LowerRefExpr(const Scope &scope, const RefExpr &expr)
     }
     case Binding::Kind::ARG: {
       EmitPeek(depth_ + binding.Index + 1);
+      return;
+    }
+    case Binding::Kind::LOCAL: {
+      EmitPeek(depth_ - binding.Index);
       return;
     }
   }

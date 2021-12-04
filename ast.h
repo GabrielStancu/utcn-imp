@@ -23,6 +23,7 @@ public:
     WHILE,
     IF,
     EXPR,
+    LET,
     RETURN
   };
 
@@ -269,6 +270,30 @@ private:
   std::shared_ptr<Stmt> stmt_;
   /// Expression to be executed in the else branch body.
   std::shared_ptr<Stmt> else_stmt_;
+};
+
+/**
+ * Let statement assigning a value to a variable.
+ */
+class LetStmt final : public Stmt {
+public:
+  LetStmt(std::string &name, std::string &type, std::shared_ptr<Expr> value_expr)
+    : Stmt(Kind::LET)
+    , name_(name)
+    , type_(type)
+    , expr_(value_expr)
+  {
+  }
+
+  const std::string &GetName() const { return name_; }
+  const std::string &GetType() const { return type_; }
+  const Expr &GetExpr() const { return *expr_; }
+
+private:
+  /// Expression to be returned.
+  std::string name_;
+  std::string type_;
+  std::shared_ptr<Expr> expr_;
 };
 
 /**
